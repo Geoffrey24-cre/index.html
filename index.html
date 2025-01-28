@@ -171,11 +171,11 @@
 
             for (const item of records) {
                 const binId = item.record; // Access the bin ID from the 'record' property
-                const url = ${baseURL}${binId};
+                const url = `${baseURL}${binId}`
 
                 try {
                     const response = await fetch(url, { headers });
-                    if (!response.ok) throw new Error(Failed to fetch bin ${binId}: ${response.statusText});
+                    if (!response.ok) throw new Error(`Failed to fetch bin ${binId}: ${response.statusText}`);
 
                     const binData = await response.json();
                     binDataArray.push(binData); // Store each bin data in the array
