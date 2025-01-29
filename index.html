@@ -1,4 +1,147 @@
-const baseURL = "https://api.jsonbin.io/v3/b/";
+ <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Logbook</title>
+    <!-- Google Fonts: Libre Baskerville for headings, Open Sans for content -->
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Base Styling */
+        body {
+            font-family: 'Open Sans', sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: linear-gradient(to right, #a2c2e9, #f4f6f9); /* Soft gradient background */
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+        }
+
+        /* Header Styling */
+        h1 {
+            font-family: 'Libre Baskerville', serif;
+            font-size: 50px;
+            color: #2c3e50;
+            text-align: center;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #4e79a7, #f39c12); /* Gradient background for header */
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        /* Table Container */
+        #data-table-div {
+            width: 90%;
+            max-width: 1200px;
+            margin-top: 30px;
+            overflow-x: auto;
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* Soft shadow */
+        }
+
+        th, td {
+            padding: 16px;
+            text-align: left;
+            color: #555;
+            font-size: 1.1em;
+        }
+
+        th {
+            background-color: #4e79a7; /* Blue color for header */
+            color: #fff;
+            font-family: 'Libre Baskerville', serif;
+            font-weight: 700;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        td {
+            background-color: #f9f9f9; /* Light gray background for table rows */
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:nth-child(even) td {
+            background-color: #f2f2f2; /* Slightly darker gray for even rows */
+        }
+
+        tr:hover {
+            background-color: #d1e7ff; /* Light blue hover effect */
+            cursor: pointer;
+        }
+
+        /* Table Row Hover Effect */
+        tr:hover td {
+            transition: background-color 0.3s ease;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            table {
+                font-size: 1em;
+            }
+
+            th, td {
+                padding: 12px;
+            }
+
+            h1 {
+                font-size: 38px;
+                margin-top: 30px;
+            }
+        }
+
+        /* Footer Styling */
+        footer {
+            margin-top: 50px;
+            color: #777;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        /* Button Styling (If Needed) */
+        .btn {
+            background-color: #4e79a7;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #2c3e50; /* Darker blue on hover */
+        }
+
+    </style>
+</head>
+
+<body>
+    <h1>Library Logbook</h1>
+    <div id="data-table-div"></div> <!-- Table container -->
+
+    <footer>
+        <p>&copy; 2024 Library Logbook. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        // API details
+        const baseURL = "https://api.jsonbin.io/v3/b/";
         const collectionURL = "https://api.jsonbin.io/v3/c/6733735dacd3cb34a8a77607/bins";
         const headers = {
             "X-Master-Key": "$2a$10$2T0yr1CzfgagtTgJ7is1Vu7UjC8arWexIkD0rpZ/u9.6GTlx.ciji",
@@ -10,40 +153,45 @@ const baseURL = "https://api.jsonbin.io/v3/b/";
                 if (!response.ok) {
                     throw new Error("Network response was not ok " + response.statusText);
                 }
-                return response.json();
+                return response.json(); // Parse the JSON data
             })
-            .then(data => fetchAllBins(data))
+            .then(data => {
+                return fetchAllBins(data); // Pass the records to fetchAllBins
+            })
             .then(binDataArray => {
                 displayRecordTable(binDataArray);
+                console.log("All bin data:", binDataArray); // Log the array with all bin data
             })
             .catch(error => {
-                console.error("Fetch error:", error);
+                console.error("Fetch error:", error); // Log any errors
             });
 
         async function fetchAllBins(records) {
-            const binDataArray = [];
+            const binDataArray = []; // Array to store all fetched bin data
 
             for (const item of records) {
-                const binId = item.record;
-                const url = ${baseURL}${binId};
+                const binId = item.record; // Access the bin ID from the 'record' property
+                const url = `${baseURL}${binId}`
 
                 try {
                     const response = await fetch(url, { headers });
-                    if (!response.ok) throw new Error(Failed to fetch bin ${binId}: ${response.statusText});
+                    if (!response.ok) throw new Error(`Failed to fetch bin ${binId}: ${response.statusText}`);
 
                     const binData = await response.json();
-                    binDataArray.push(binData.record); // Extract only the record data
+                    binDataArray.push(binData); // Store each bin data in the array
                 } catch (error) {
                     console.error("Error fetching bin data:", error);
                 }
             }
 
-            return binDataArray;
+            return binDataArray; // Return the array with all bin data
         }
 
         function displayRecordTable(data) {
+            // Find the target div by ID
             const targetDiv = document.getElementById("data-table-div");
 
+            // Initialize HTML for the table
             let tableHTML = `
                 <table>
                     <thead>
@@ -57,7 +205,9 @@ const baseURL = "https://api.jsonbin.io/v3/b/";
                     <tbody>
             `;
 
-            data.forEach(record => {
+            // Loop through each item in the data array and add a row for each record
+            data.forEach(item => {
+                const record = item.record;
                 tableHTML += `
                     <tr>
                         <td>${record.name}</td>
@@ -68,13 +218,16 @@ const baseURL = "https://api.jsonbin.io/v3/b/";
                 `;
             });
 
+            // Close the table
             tableHTML += `
                     </tbody>
                 </table>
             `;
 
+            // Update the inner HTML of the target div
             targetDiv.innerHTML = tableHTML;
         }
+    </script>
 </body>
 
 </html>
